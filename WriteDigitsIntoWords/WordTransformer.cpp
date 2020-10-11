@@ -30,8 +30,9 @@ std::stringstream& AppendWord(std::stringstream& ss, std::string const& word)
 
 std::string WordTransformer::StartProcessingText()
 {
-    int currentValue = 0;
-    int groupValue = 0;
+    // Using int because of max number in exercise is 999.999.999
+    std::optional<int> currentValue;
+    std::optional<int> groupValue;
     bool hasGroupValue = false;
     bool hasCurrentValue = false;
 
@@ -58,23 +59,15 @@ std::string WordTransformer::StartProcessingText()
         {
             numberStarted = false;
 
-            if (hasGroupValue)
-            {
-                currentValue += groupValue;
-                hasCurrentValue = true;
-            }
+            if (groupValue.has_value())
+                currentValue = std::make_optional(currentValue.value_or(0) + groupValue.value());
 
             // Flush number if found before
-            if (hasCurrentValue)
-            {
-                AppendWord(ss, std::to_string(currentValue));
-            }
+            if (currentValue.has_value())
+                AppendWord(ss, std::to_string(currentValue.value()));
 
-            groupValue = 0;
-            hasGroupValue = false;
-
-            currentValue = 0;
-            hasCurrentValue = false;
+            groupValue.reset();
+            currentValue.reset();
 
             AppendWord(ss, str);
             continue;
@@ -83,9 +76,8 @@ std::string WordTransformer::StartProcessingText()
         // Figure found
         if (figure.has_value())
         {
-            groupValue += figure.value();
+            groupValue = std::make_optional(groupValue.value_or(0) + figure.value());
             numberStarted = true;
-            hasGroupValue = true;
         }
 
         // Modify figure value
@@ -93,33 +85,28 @@ std::string WordTransformer::StartProcessingText()
         {
             bool mult = modifier.value().second == ModifiersType::TYPE_MULTIPLIER ? true : false;
 
+            // Modifiers groups closings, thousand, million and billion
             if (modifier.value().first == 1000 || modifier.value().first == 1000000 || modifier.value().first == 1000000000)
             {
-                currentValue += mult ? groupValue * modifier.value().first : groupValue + modifier.value().first;
-                hasCurrentValue = true;
-                groupValue = 0;
-                hasGroupValue = false;
+                int val = currentValue.value_or(0) + (mult ? groupValue.value_or(0) * modifier.value().first : groupValue.value_or(0) + modifier.value().first);
+                currentValue = std::make_optional(val);
+                groupValue.reset();
             }
             else
             {
-                groupValue = mult ? groupValue * modifier.value().first : groupValue + modifier.value().first;
-                hasGroupValue = true;
+                int val = (mult ? groupValue.value_or(0) * modifier.value().first : groupValue.value_or(0) + modifier.value().first);
+                groupValue = std::make_optional(val);
             }
         }
 
-        //std::cout << currentValue << " " << groupValue << std::endl;
+        std::cout << currentValue.value_or(0) << " " << groupValue.value_or(0) << std::endl;
     }
 
-    if (hasGroupValue)
-    {
-        currentValue += groupValue;
-        hasCurrentValue = true;
-    }
+    if (groupValue.has_value())
+        currentValue = std::make_optional(currentValue.value_or(0) + groupValue.value());
 
-    if (hasCurrentValue)
-    {
-        AppendWord(ss, std::to_string(currentValue));
-    }
+    if (currentValue.has_value())
+        AppendWord(ss, std::to_string(currentValue.value()));
 
     return ss.str();
 }

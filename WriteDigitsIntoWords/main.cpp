@@ -6,9 +6,8 @@
 #include "Utils.h"
 #include "WordTransformer.h"
 
-int main(int argc, char* argv[])
+void ProcessInput(int argc, char* argv[], std::vector<std::string>& words)
 {
-    std::vector<std::string> words;
     if (argc > 1)
     {
         for (int i = 1; i < argc; i++)
@@ -24,6 +23,13 @@ int main(int argc, char* argv[])
 
         words = SplitString(phrase);
     }
+}
+
+int main(int argc, char* argv[])
+{
+    std::vector<std::string> words;
+
+    ProcessInput(argc, argv, words);
 
     WordTransformer transformer = WordTransformer(std::move(words));
     std::string res = transformer.StartProcessingText();
