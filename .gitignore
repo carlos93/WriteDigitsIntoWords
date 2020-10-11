@@ -1,6 +1,9 @@
 WriteDigitsIntoWords/Debug/*
+WriteDigitsIntoWords/Release/*
 WriteDigitsIntoWords/packages/*
 WriteDigitsIntoWords/.vs/*
 WriteDigitsIntoWords/x64/*
 WriteDigitsIntoWordsTest/x64/*
+WriteDigitsIntoWordsTest/Release/*
+WriteDigitsIntoWordsTest/Debug/*
 build/*

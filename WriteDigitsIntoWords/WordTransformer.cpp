@@ -39,7 +39,7 @@ std::string WordTransformer::StartProcessingText()
     bool numberStarted = false;
 
     std::stringstream ss;
-    for (int i = 0; i < _words.size(); i++)
+    for (size_t i = 0; i < _words.size(); i++)
     {
         std::string str = _words.at(i);
 
