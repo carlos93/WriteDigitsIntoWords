@@ -3,26 +3,27 @@
 #include <map>
 #include <iostream>
 
+#include "Utils.h"
 #include "WordTransformer.h"
 
 int main(int argc, char* argv[])
 {
-    if (argc < 1)
-    {
-        std::cout << "Error: Number of arguments incorrect, it should be > 1" << std::endl;
-        return 1;
-    }
-
     std::vector<std::string> words;
-    for (int i = 1; i < argc; i++)
+    if (argc > 1)
     {
-        std::string wordToProcess = argv[i];
-
-        std::cout << wordToProcess << " ";
-        words.push_back(wordToProcess);
+        for (int i = 1; i < argc; i++)
+        {
+            std::string wordToProcess = argv[i];
+            words.push_back(wordToProcess);
+        }
     }
+    else
+    {
+        std::string phrase = "";
+        std::getline(std::cin, phrase);
 
-    std::cout << std::endl;
+        words = SplitString(phrase);
+    }
 
     WordTransformer transformer = WordTransformer(std::move(words));
     std::string res = transformer.StartProcessingText();

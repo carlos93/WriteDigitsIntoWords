@@ -10,6 +10,14 @@ TEST(BasicTests, OneDigit)
     std::string correctPhrase = "";
     std::string finalText = "";
 
+    phrase = "ZerO";
+    correctPhrase = "0";
+    words = SplitString(phrase);
+    transformer.LoadPhrase(std::move(words));
+    finalText = transformer.StartProcessingText();
+    transformer.ClearWords();
+    EXPECT_TRUE(finalText == correctPhrase);
+
     phrase = "One";
     correctPhrase = "1";
     words = SplitString(phrase);

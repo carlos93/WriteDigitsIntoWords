@@ -1,0 +1,9 @@
+cmake_minimum_required(VERSION 3.13)
+project(WriteDigitsIntoWords)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+add_executable(WriteDigitsIntoWords WriteDigitsIntoWords/main.cpp WriteDigitsIntoWords/WordTransformer.cpp WriteDigitsIntoWords/WordTransformer.h WriteDigitsIntoWords/Utils.cpp WriteDigitsIntoWords/Utils.h)
+#add_executable(WriteDigitsIntoWordsTest WriteDigitsIntoWordsTest/pch.cpp WriteDigitsIntoWordsTest/pch.h WriteDigitsIntoWordsTest/PhraseTests.cpp WriteDigitsIntoWordsTest/BasicTests.cpp)
+

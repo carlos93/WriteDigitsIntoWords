@@ -32,7 +32,8 @@ std::string WordTransformer::StartProcessingText()
 {
     int currentValue = 0;
     int groupValue = 0;
-    int totalValue = 0;
+    bool hasGroupValue = false;
+    bool hasCurrentValue = false;
 
     bool numberStarted = false;
 
@@ -57,19 +58,23 @@ std::string WordTransformer::StartProcessingText()
         {
             numberStarted = false;
 
-            if (groupValue > 0)
+            if (hasGroupValue)
             {
                 currentValue += groupValue;
+                hasCurrentValue = true;
             }
 
             // Flush number if found before
-            if (currentValue > 0)
+            if (hasCurrentValue)
             {
                 AppendWord(ss, std::to_string(currentValue));
             }
 
             groupValue = 0;
+            hasGroupValue = false;
+
             currentValue = 0;
+            hasCurrentValue = false;
 
             AppendWord(ss, str);
             continue;
@@ -80,6 +85,7 @@ std::string WordTransformer::StartProcessingText()
         {
             groupValue += figure.value();
             numberStarted = true;
+            hasGroupValue = true;
         }
 
         // Modify figure value
@@ -90,23 +96,27 @@ std::string WordTransformer::StartProcessingText()
             if (modifier.value().first == 1000 || modifier.value().first == 1000000 || modifier.value().first == 1000000000)
             {
                 currentValue += mult ? groupValue * modifier.value().first : groupValue + modifier.value().first;
+                hasCurrentValue = true;
                 groupValue = 0;
+                hasGroupValue = false;
             }
             else
             {
                 groupValue = mult ? groupValue * modifier.value().first : groupValue + modifier.value().first;
+                hasGroupValue = true;
             }
         }
 
         //std::cout << currentValue << " " << groupValue << std::endl;
     }
 
-    if (groupValue > 0)
+    if (hasGroupValue)
     {
         currentValue += groupValue;
+        hasCurrentValue = true;
     }
 
-    if (currentValue > 0)
+    if (hasCurrentValue)
     {
         AppendWord(ss, std::to_string(currentValue));
     }
