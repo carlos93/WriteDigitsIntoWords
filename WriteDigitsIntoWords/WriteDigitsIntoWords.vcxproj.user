@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LocalDebuggerCommandArguments>I have twenty one thousand three hundred and forty five apples and two thousand three hundred sixty one oranges</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>three hundred thirty one million two hundred one thousand three hundred twenty two</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
 </Project>

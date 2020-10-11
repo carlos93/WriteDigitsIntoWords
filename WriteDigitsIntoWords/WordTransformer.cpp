@@ -30,18 +30,15 @@ std::stringstream& AppendWord(std::stringstream& ss, std::string const& word)
 
 std::string WordTransformer::StartProcessingText()
 {
+    int currentValue = 0;
+    int groupValue = 0;
+    int totalValue = 0;
+
     bool numberStarted = false;
-    bool lastWasFigure = false;
-    bool lastWasModifier = false;
-    bool groupStarted = false;
-    int figureValue = 0;
-    int figureGroupValue = 0;
-    int totalNumber = 0;
-    int tempSum = 0;
+
     std::stringstream ss;
     for (int i = 0; i < _words.size(); i++)
     {
-        bool numberFinished = false;
         std::string str = _words.at(i);
 
         // Skip empty words
@@ -55,20 +52,24 @@ std::string WordTransformer::StartProcessingText()
         if (!figure.has_value())
             modifier = TryConvertModifier(str);
 
-        // Nothing found, ignoring
+        // Normal word found
         if ((!modifier.has_value() && !figure.has_value()) || (!numberStarted && str == "and"))
         {
-            if (numberStarted)
-            {
-                tempSum += figureValue;
-                AppendWord(ss, std::to_string(tempSum));
-            }
-            figureValue = 0;
-            figureGroupValue = 0;
-            totalNumber = 0;
-            tempSum = 0;
             numberStarted = false;
-            groupStarted = false;
+
+            if (groupValue > 0)
+            {
+                currentValue += groupValue;
+            }
+
+            // Flush number if found before
+            if (currentValue > 0)
+            {
+                AppendWord(ss, std::to_string(currentValue));
+            }
+
+            groupValue = 0;
+            currentValue = 0;
 
             AppendWord(ss, str);
             continue;
@@ -77,49 +78,37 @@ std::string WordTransformer::StartProcessingText()
         // Figure found
         if (figure.has_value())
         {
-            if (lastWasFigure)
-                figureValue += figure.value();
-            else
-                figureValue = figure.value();
-
-            figureGroupValue = 0;
-            lastWasFigure = true;
-            lastWasModifier = false;
+            groupValue += figure.value();
             numberStarted = true;
-            groupStarted = true;
-            std::cout << figureValue << " " << figureGroupValue << std::endl;
         }
 
         // Modify figure value
         if (modifier.has_value())
         {
             bool mult = modifier.value().second == ModifiersType::TYPE_MULTIPLIER ? true : false;
-            //if (modifier.value().first != 1000000)
-            {
-                figureValue = mult ? figureValue * modifier.value().first : figureValue + modifier.value().first;
-            }
 
-            lastWasFigure = false;
-            lastWasModifier = true;
-            figureGroupValue += figureValue;
-            std::cout << figureValue << " " << figureGroupValue << std::endl;
-            //if (modifier.value().first == 1000000)
-            //    groupStarted = false;
+            if (modifier.value().first == 1000 || modifier.value().first == 1000000 || modifier.value().first == 1000000000)
+            {
+                currentValue += mult ? groupValue * modifier.value().first : groupValue + modifier.value().first;
+                groupValue = 0;
+            }
+            else
+            {
+                groupValue = mult ? groupValue * modifier.value().first : groupValue + modifier.value().first;
+            }
         }
 
-        if (lastWasModifier)
-            tempSum += figureGroupValue;
-
-        if (i == _words.size() - 1)
-            tempSum += figureValue;
-
-        //std::cout << std::to_string(figureValue) << ": Total: " << std::to_string(totalNumber) << std::endl;
+        //std::cout << currentValue << " " << groupValue << std::endl;
     }
 
-    if (numberStarted)
+    if (groupValue > 0)
     {
-        totalNumber += figureValue;
-        AppendWord(ss, std::to_string(totalNumber));
+        currentValue += groupValue;
+    }
+
+    if (currentValue > 0)
+    {
+        AppendWord(ss, std::to_string(currentValue));
     }
 
     return ss.str();
