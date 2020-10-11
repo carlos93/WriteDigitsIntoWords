@@ -1,0 +1,5 @@
+WriteDigitsIntoWords/Debug/*
+WriteDigitsIntoWords/packages/*
+WriteDigitsIntoWords/.vs/*
+WriteDigitsIntoWords/x64/*
+WriteDigitsIntoWordsTest/x64/*
